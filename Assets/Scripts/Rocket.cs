@@ -9,7 +9,8 @@ public class Rocket : MonoBehaviour
     Rigidbody rigidbody;
     AudioSource audioSource;
 
-    public float rcsThrust =1;
+    [SerializeField]  float rcsThrust = 100f;
+    [SerializeField] float mainThrust = 100f;
 
     // Start is called before the first frame update
     void Start()
@@ -21,18 +22,38 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        processInput();
+        thrust();
+        rotate();
     }
 
-    private void processInput()
+    private void rotate()
     {
         //cannot rotate right and left at the same time.
         //can use rotate and thrust together
 
+        rigidbody.freezeRotation = true;  //take manual control of rotation
+        float rotationThisFrame = rcsThrust * Time.deltaTime;
+        //A key to rotate left, D key rotate left, cannot rotate both at same time.
+        if (Input.GetKey(KeyCode.A))
+        {
+            transform.Rotate(Vector3.forward * rotationThisFrame);
+
+        }else if (Input.GetKey(KeyCode.D))
+        {
+            transform.Rotate(-Vector3.forward * rotationThisFrame);
+        }
+
+        rigidbody.freezeRotation = false; //resume physics control of rotation. 
+       
+    }
+    private void thrust()
+    {
+        
         //space key for thrust
         if (Input.GetKey(KeyCode.Space))
         {
-            rigidbody.AddRelativeForce(Vector3.up);
+            rigidbody.AddRelativeForce(Vector3.up * mainThrust);
+
             if (!audioSource.isPlaying) //so audio doesnt layer on itself
             {
                 audioSource.Play();
@@ -42,17 +63,23 @@ public class Rocket : MonoBehaviour
         {
             audioSource.Stop();
         }
-
-        //A key to rotate left, D key rotate left, cannot rotate both at same time.
-        if (Input.GetKey(KeyCode.A))
-        {
-            transform.Rotate(Vector3.forward,rcsThrust * Time.deltaTime);
-
-        }else if (Input.GetKey(KeyCode.D))
-        {
-            transform.Rotate(-Vector3.forward,rcsThrust * Time.deltaTime);
-        }
-
-       
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case "Friendly":
+                {
+                    print("friendly");
+                    break;
+                }
+             default:
+                {
+                    print("destroyed");
+                    break;
+                }
+        }
+    }
+
 }
