@@ -63,6 +63,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\ControlDisplay.cs" />
+    <Compile Include="Assets\Scripts\Oscilator.cs" />
     <Compile Include="Assets\Scripts\Rocket.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/dev/git/unity/projectBoost/project-boost/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
